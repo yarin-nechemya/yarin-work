@@ -28,18 +28,25 @@ def frequency_score(text):
         error += (observed - expected) ** 2 / expected
 
     return error
+
 def force_decrypt(msg):
     candidates = []
-
     for shift in range(26):
         decrypted = ceaser.decrypt(msg, shift)
-
         candidates.append({
             "text": decrypted,
             "shift": shift,
-            "frequency": frequency_score(decrypted)
-        })
-
+            "frequency": frequency_score(decrypted)})
+    candidates.sort(key=lambda x: x["frequency"])
+    return candidates[0]["shift"], candidates[0]["text"]
+def force_decrypt_transposition(msg):
+        candidates = []
+    for shift in range(1,len(msg)):
+        decrypted = ceaser.decrypt(msg, shift)
+        candidates.append({
+            "text": decrypted,
+            "shift": shift,
+            "frequency": frequency_score(decrypted)})
     candidates.sort(key=lambda x: x["frequency"])
     return candidates[0]["shift"], candidates[0]["text"]
 
