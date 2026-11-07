@@ -1,9 +1,6 @@
-import ceaser
 from collections import Counter
+import ceaser
 import string
-import transposition
-kworst_error = 30
-kmax_gap = 8
 ENGLISH_FREQ = {
     'A': 8.12, 'B': 1.49, 'C': 2.71, 'D': 4.32,
     'E': 12.02, 'F': 2.30, 'G': 2.03, 'H': 5.92,
@@ -15,66 +12,35 @@ ENGLISH_FREQ = {
 }
 
 def frequency_score(text):
-    text = text.lower()
-    letters = [c for c in text if c in string.ascii_lowercase]
+    letters = [c for c in text.upper() if c in string.ascii_uppercase]
+
     if not letters:
-        return float('-inf')
+        return float("inf")
+
     counts = Counter(letters)
     n = len(letters)
-    error = 0.0
+
+    error = 0
+
     for letter, frequency in ENGLISH_FREQ.items():
         expected = n * frequency / 100
         observed = counts[letter]
-
         error += (observed - expected) ** 2 / expected
-    return -error
-    return error
 
-def force_decrypt_ceaser(msg):
+    return error
+def force_decrypt(msg):
     candidates = []
+
     for shift in range(26):
         decrypted = ceaser.decrypt(msg, shift)
+
         candidates.append({
             "text": decrypted,
             "shift": shift,
             "frequency": frequency_score(decrypted)
         })
-    candidates.sort(
-        key=lambda x: x["frequency"],
-        reverse=True
-    )
-    best = candidates[0]
-    second = candidates[1]
-    confident = (
-        best["frequency"] > -kworst_error
-        and best["frequency"] - second["frequency"] > kmax_gap
-    )
-    if confident:
-        return best["shift"], best["text"]
-    return None
 
+    candidates.sort(key=lambda x: x["frequency"])
+    return candidates[0]["shift"], candidates[0]["text"]
 
-def force_decrypt_transposition(msg):
-    candidates = []
-    for shift in range(1,len(msg)-1):
-        decrypted = transposition.decrypt(msg, shift)
-        candidates.append({
-            "text": decrypted,
-            "shift": shift,
-            "frequency": frequency_score(decrypted)
-        })
-    candidates.sort(
-        key=lambda x: x["frequency"],
-        reverse=True
-    )
-    best = candidates[0]
-    second = candidates[1]
-    confident = (
-        best["frequency"] > -kworst_error
-        and best["frequency"] - second["frequency"] > kmax_gap
-    )
-    if confident:
-        return best["shift"], best["text"]
-    return None
-ceaser_encrypted = "L DXLWW MZLE NCZDDPO ESP WLVP PLCWJ TY ESP XZCYTYR MPQZCP ESP DEZCX LCCTGPO ESP EPLX HZY ESP XLENS TY ESP WLDE XTYFEP LQEPC L"
-print(force_decrypy_transposition(ceaser_encrypted)
+print(force_decrypt("L DXLWW MZLE NCZDDPO ESP WLVP PLCWJ TY ESP XZCYTYR MPQZCP ESP DEZCX LCCTGPO ESP EPLX HZY ESP XLENS TY ESP WLDE XTYFEP LQEPC L"))
