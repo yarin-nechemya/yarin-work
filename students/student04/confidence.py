@@ -1,6 +1,7 @@
 from collections import Counter
 import ceaser
 import string
+import transposition
 ENGLISH_FREQ = {
     'A': 8.12, 'B': 1.49, 'C': 2.71, 'D': 4.32,
     'E': 12.02, 'F': 2.30, 'G': 2.03, 'H': 5.92,
@@ -42,7 +43,7 @@ def force_decrypt(msg):
 def force_decrypt_transposition(msg):
         candidates = []
     for shift in range(1,len(msg)):
-        decrypted = ceaser.decrypt(msg, shift)
+        decrypted = transposition.decrypt(msg, shift)
         candidates.append({
             "text": decrypted,
             "shift": shift,
