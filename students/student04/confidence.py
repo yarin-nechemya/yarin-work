@@ -1,6 +1,7 @@
 import ceaser
 from collections import Counter
 import string
+import transposition
 kworst_error = 30
 kmax_gap = 8
 ENGLISH_FREQ = {
@@ -33,6 +34,30 @@ def force_decrypt_ceaser(msg):
     candidates = []
     for shift in range(26):
         decrypted = ceaser.decrypt(msg, shift)
+        candidates.append({
+            "text": decrypted,
+            "shift": shift,
+            "frequency": frequency_score(decrypted)
+        })
+    candidates.sort(
+        key=lambda x: x["frequency"],
+        reverse=True
+    )
+    best = candidates[0]
+    second = candidates[1]
+    confident = (
+        best["frequency"] > -kworst_error
+        and best["frequency"] - second["frequency"] > kmax_gap
+    )
+    if confident:
+        return best["shift"], best["text"]
+    return None
+
+
+def force_decrypt_transposition(msg):
+    candidates = []
+    for shift in range(26):
+        decrypted = transposition.decrypt(msg, shift)
         candidates.append({
             "text": decrypted,
             "shift": shift,
