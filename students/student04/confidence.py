@@ -56,7 +56,7 @@ def force_decrypt_ceaser(msg):
 
 def force_decrypt_transposition(msg):
     candidates = []
-    for shift in range(26):
+    for shift in range(1,len(msg)-1):
         decrypted = transposition.decrypt(msg, shift)
         candidates.append({
             "text": decrypted,
@@ -76,3 +76,5 @@ def force_decrypt_transposition(msg):
     if confident:
         return best["shift"], best["text"]
     return None
+ceaser_encrypted = "L DXLWW MZLE NCZDDPO ESP WLVP PLCWJ TY ESP XZCYTYR MPQZCP ESP DEZCX LCCTGPO ESP EPLX HZY ESP XLENS TY ESP WLDE XTYFEP LQEPC L"
+print(force_decrypy_transposition(ceaser_encrypted)
